@@ -4,6 +4,7 @@ import com.example.cloudstorage.model.File;
 import com.example.cloudstorage.model.User;
 import com.example.cloudstorage.services.CredentialService;
 import com.example.cloudstorage.services.FileService;
+import com.example.cloudstorage.services.NoteService;
 import org.springframework.security.core.Authentication;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Controller;
@@ -14,11 +15,13 @@ import org.springframework.web.servlet.ModelAndView;
 public class HomeController {
     private CredentialService credentialService;
     private FileService fileService;
+    private NoteService noteService;
 
     @Autowired
-    public HomeController(CredentialService credentialService, FileService fileService){
+    public HomeController(CredentialService credentialService, FileService fileService, NoteService noteService){
         this.credentialService = credentialService;
         this.fileService = fileService;
+        this.noteService = noteService;
     }
 
     @GetMapping(value = {"/", "/dashboard"})
@@ -28,6 +31,7 @@ public class HomeController {
         ModelAndView modelAndView = new ModelAndView("home");
         modelAndView.addObject("credentials", credentialService.getAllByUserId(user.getUserId()));
         modelAndView.addObject("files", fileService.getFile());
+        modelAndView.addObject("notes", noteService.getNote());
 
         return modelAndView;
     }
