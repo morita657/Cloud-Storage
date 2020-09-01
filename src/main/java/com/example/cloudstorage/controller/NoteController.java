@@ -17,13 +17,14 @@ public class NoteController {
 
 
     @PostMapping(value = "/add-note")
-    public String addNote(Authentication authentication, String noteTitle, String noteDescription, Long noteId){
-//        System.out.println("noteid on post: " + noteId);
+    public String addNote(Authentication authentication, String noteTitle, String noteDescription, Long noteId, Note note){
+
+        System.out.println("note info: " + note);
         User user = (User) authentication.getPrincipal();
         if(noteId > 0){
 //            PUT METHOD
             System.out.println("PUT METHOD: " + noteId);
-            if(noteService.editNote(noteTitle, noteDescription, user.getUserId(), noteId)){
+            if(noteService.editNote(note, user.getUserId())){
                 return "redirect:/result?success";
             }
             else{
@@ -33,7 +34,7 @@ public class NoteController {
         else{
 //            POST METHOD
         System.out.println("this is the noteid for post: " + noteId);
-        if(noteService.addNote(noteTitle, noteDescription, user.getUserId())){
+        if(noteService.addNote(note, user.getUserId())){
             return "redirect:/result?success";
         }
         else{

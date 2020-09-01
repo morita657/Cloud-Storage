@@ -18,10 +18,9 @@ public class NoteService {
         return noteMapper.getAllNotes();
     }
 
-    public boolean addNote(String noteTitle, String noteDescription, Long userid){
+    public boolean addNote(Note note, Long userid){
         try{
-            Note newNote = new Note(noteTitle, noteDescription);
-            noteMapper.create(newNote, userid);
+            noteMapper.create(note, userid);
             return true;
         }catch(Exception e){
             System.out.println("Note creation error: "+e);
@@ -29,10 +28,9 @@ public class NoteService {
         }
     }
 
-    public boolean editNote(String noteTitle, String noteDescription, Long userid, Long noteid){
+    public boolean editNote(Note note, Long userid){
         try{
-            Note newNote = new Note(noteTitle, noteDescription);
-            noteMapper.update(newNote, userid, noteid);
+            noteMapper.update(note, userid);
             return true;
         }catch(Exception e){
             System.out.println("Note edit error: "+e);
