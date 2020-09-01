@@ -99,8 +99,9 @@
                                     <span aria-hidden="true">&times;</span>
                                 </button>
                             </div>
+                            <!--               POST METHOD             -->
                             <div class="modal-body">
-                                <form th:action="@{/add-note}" method="POST">
+                                <form id="modal-form" th:action="@{/add-note}" method="POST">
                                     <input type="hidden" name="noteId" id="note-id">
                                     <div class="form-group">
                                         <label for="note-title" class="col-form-label">Title</label>
@@ -113,6 +114,7 @@
                                     <button id="noteSubmit" type="submit" class="d-none"></button>
                                 </form>
                             </div>
+
                             <div class="modal-footer">
                                 <button type="button" class="btn btn-secondary" data-dismiss="modal">Close</button>
                                 <button type="button" id="saveNoteButton" class="btn btn-primary" onclick="$('#noteSubmit').click();">Save changes</button>

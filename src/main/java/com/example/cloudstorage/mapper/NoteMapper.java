@@ -18,4 +18,9 @@ public interface NoteMapper {
     @Select("insert into Notes (notetitle, notedescription, userid) values (#{note.noteTitle}, #{note.noteDescription}, #{userid})")
     @Options(useGeneratedKeys = true, keyProperty = "noteId")
     Integer create(@Param("note") Note note , Long userid);
+
+
+    @Select("update Notes set notetitle=#{note.noteTitle}, notedescription= #{note.noteDescription} where userid = #{userid} and noteid = #{noteid}")
+    @Options(useGeneratedKeys = true, keyProperty = "noteId")
+    Integer update(@Param("note") Note note , Long userid, Long noteid);
 }

@@ -28,4 +28,15 @@ public class NoteService {
             return false;
         }
     }
+
+    public boolean editNote(String noteTitle, String noteDescription, Long userid, Long noteid){
+        try{
+            Note newNote = new Note(noteTitle, noteDescription);
+            noteMapper.update(newNote, userid, noteid);
+            return true;
+        }catch(Exception e){
+            System.out.println("Note creation error: "+e);
+            return false;
+        }
+    }
 }
