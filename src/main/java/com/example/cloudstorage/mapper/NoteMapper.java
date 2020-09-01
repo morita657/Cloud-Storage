@@ -23,7 +23,7 @@ public interface NoteMapper {
 
 
 
-    @Delete("delte from Notes where userid = #{userid} and noteid = #{noteid}")
+    @Delete("delete from Notes where userid = #{userid} and noteid = #{noteid}")
     @Options(useGeneratedKeys = true, keyProperty = "noteId")
-    Integer delete(@Param("note") Long userid, Long noteid);
+    Integer delete(Long userid, Long noteid);
 }

@@ -35,7 +35,19 @@ public class NoteService {
             noteMapper.update(newNote, userid, noteid);
             return true;
         }catch(Exception e){
-            System.out.println("Note creation error: "+e);
+            System.out.println("Note edit error: "+e);
+            return false;
+        }
+    }
+    
+
+    public boolean deleteNote(Long userid, Long noteid){
+        try{
+            noteMapper.delete(userid, noteid);
+            return true;
+        }
+        catch(Exception e){
+            System.out.println("Note delete error: "+e);
             return false;
         }
     }

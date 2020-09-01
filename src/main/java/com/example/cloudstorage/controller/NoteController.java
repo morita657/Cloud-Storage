@@ -5,9 +5,7 @@ import com.example.cloudstorage.model.User;
 import com.example.cloudstorage.services.NoteService;
 import org.springframework.security.core.Authentication;
 import org.springframework.stereotype.Controller;
-import org.springframework.web.bind.annotation.GetMapping;
-import org.springframework.web.bind.annotation.PostMapping;
-import org.springframework.web.bind.annotation.PutMapping;
+import org.springframework.web.bind.annotation.*;
 
 @Controller
 public class NoteController {
@@ -44,16 +42,17 @@ public class NoteController {
         }
     }
 
-//    @PutMapping(value = "/edit-note")
-//    public String editNote(Authentication authentication, String noteTitle, String noteDescription, Long noteId){
-//        User user = (User) authentication.getPrincipal();
-//        //            PUT METHOD
-//        System.out.println("this is the noteid for put: " + noteId);
-//        if(noteService.editNote(noteTitle, noteDescription, user.getUserId(), noteId)){
-//            return "redirect:/result?success";
-//        }
-//        else{
-//            return "redirect:/result?error";
-//        }
-//    }
+
+    @GetMapping(value="/delete-note/{id}")
+    public String deleteNote(Authentication authentication, @PathVariable("id") Long noteId){
+        System.out.println("delete note id: " + noteId);
+        User user = (User) authentication.getPrincipal();
+        System.out.println("delete user id: " + user.getUserId());
+        if(noteService.deleteNote(user.getUserId(), noteId)){
+            return "redirect:/result?success";
+        }
+        else{
+            return "redirect:/result?error";
+        }
+    }
 }
