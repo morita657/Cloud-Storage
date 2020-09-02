@@ -30,4 +30,14 @@ public class FileService {
             return false;
         }
     }
+
+    public boolean deleteFile(Long userid, Long fileid){
+        try{
+            fileMapper.delete(fileid, userid);
+            return true;
+        }catch(Exception e){
+            System.out.println("Error: "+ e);
+            return false;
+        }
+    }
 }
