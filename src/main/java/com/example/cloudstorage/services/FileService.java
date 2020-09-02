@@ -23,8 +23,6 @@ public class FileService {
 
         try{
             File newfile = new File(file.getOriginalFilename(), file.getContentType(), file.getSize(), file.getBytes());
-            System.out.println("File: "+ file.getOriginalFilename()+ " : "+ file.getContentType()+ " : "+ file.getSize()+ " : "+ file.getBytes());
-            System.out.println("File info: "+newfile);
             fileMapper.create(newfile, userid);
             return true;
         }catch(Exception e){
