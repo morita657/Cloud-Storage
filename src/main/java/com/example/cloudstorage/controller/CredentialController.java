@@ -18,11 +18,21 @@ public class CredentialController {
     }
 
     @PostMapping(value = "/add-credential")
-    public String addCredential(Authentication authentication, Credential credential){
+    public String addCredential(Authentication authentication, Credential credential, Long credentialId){
         User user = (User) authentication.getPrincipal();
-        if(credentialService.createCredential(credential, user.getUserId())){
-            return "redirect:/result?success";
+        System.out.println("credential id: "+credentialId);
+        if(credentialId>0){
+//            PUT METHOD
+            if(credentialService.updateCredential(credential, user.getUserId())){
+                return "redirect:/result?success";
+            }
+            return "redirect:/result?error";
         }
-        return "redirect:/result?error";
+        else{
+            if(credentialService.createCredential(credential, user.getUserId())){
+                return "redirect:/result?success";
+            }
+            return "redirect:/result?error";
+        }
     }
 }

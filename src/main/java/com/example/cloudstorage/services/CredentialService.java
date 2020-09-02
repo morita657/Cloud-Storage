@@ -33,6 +33,7 @@ public class CredentialService {
         for(Credential credential:credentials){
             credential.setDecryptedPassword(decryptPassword(credential.getPassword(),credential.getKey()));
             credential.setPassword(credential.getDecryptedPassword());
+            credential.setKey(credential.getKey());
         }
         return credentials;
     }
@@ -45,6 +46,7 @@ public class CredentialService {
         for(Credential credential:credentials){
             credential.setDecryptedPassword(decryptPassword(credential.getPassword(), credential.getKey()));
             credential.setPassword(credential.getDecryptedPassword());
+            credential.setKey(credential.getKey());
         }
         return credentials;
     }
@@ -54,6 +56,15 @@ public class CredentialService {
     }
 
     private Credential createEncryptedCredential(Credential credential){
+        SecureRandom random = new SecureRandom();
+        byte[] key = new byte[16];
+        random.nextBytes(key);
+        credential.setKey(Base64.getEncoder().encodeToString(key));
+        String hashedPassword =encryptionService.encryptValue(credential.getPassword(), credential.getKey());
+        credential.setPassword(hashedPassword);
+        return credential;
+    }
+    private Credential updateEncryptedCredential(Credential credential){
         SecureRandom random = new SecureRandom();
         byte[] key = new byte[16];
         random.nextBytes(key);
@@ -72,6 +83,17 @@ public class CredentialService {
             return true;
         }
         catch(Exception e){
+            System.out.println("creation error :" + e);
+            return false;
+        }
+    }
+
+    public boolean updateCredential(Credential credential, Long userid){
+        try{
+            Credential updatedCredential = updateEncryptedCredential(credential);
+            credentialsMapper.update(updatedCredential, userid);
+            return true;
+        }catch(Exception e){
             System.out.println("creation error :" + e);
             return false;
         }
