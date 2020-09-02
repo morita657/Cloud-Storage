@@ -98,4 +98,15 @@ public class CredentialService {
             return false;
         }
     }
+
+    public boolean deleteCredential(Long credentialId, Long userid){
+        try{
+            credentialsMapper.delete(credentialId, userid);
+            return true;
+        }
+        catch(Exception e){
+            System.out.println("Note delete error: "+e);
+            return false;
+        }
+    }
 }
