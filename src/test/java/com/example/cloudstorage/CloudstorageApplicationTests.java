@@ -3,6 +3,7 @@ package com.example.cloudstorage;
 import io.github.bonigarcia.wdm.WebDriverManager;
 import org.junit.jupiter.api.*;
 import org.openqa.selenium.By;
+import org.openqa.selenium.JavascriptExecutor;
 import org.openqa.selenium.WebDriver;
 import org.openqa.selenium.WebElement;
 import org.openqa.selenium.chrome.ChromeDriver;
@@ -73,8 +74,8 @@ class CloudstorageApplicationTests {
 		WebElement passwordInputField = wait.until(ExpectedConditions.visibilityOfElementLocated(By.id("inputPassword")));
 		passwordInputField.sendKeys(password);
 
-		WebElement signUpButton = driver.findElement(By.id("buttonLogin"));
-		wait.until(ExpectedConditions.elementToBeClickable(signUpButton)).submit();
+		WebElement loginButton = driver.findElement(By.id("buttonLogin"));
+		wait.until(ExpectedConditions.elementToBeClickable(loginButton)).submit();
 	}
 
 	private void _logoutClick(){
@@ -92,6 +93,40 @@ class CloudstorageApplicationTests {
 		wait.until(ExpectedConditions.visibilityOfElementLocated(By.id("inputPassword")));
 		driver.get(String.format("http://localhost:%s/dashboard", this.port));
 		assertThat(driver.getTitle()).isEqualTo("Login");
+	}
+
+
+
+	private void _createNote(String title, String description){
+		WebDriverWait wait = new WebDriverWait(driver, 10);
+		JavascriptExecutor executor = (JavascriptExecutor) driver;
+		WebElement noteTab = wait.until(ExpectedConditions.visibilityOfElementLocated(By.id("nav-notes-tab")));
+//		noteTab.click();
+		executor.executeScript("arguments[0].click()", noteTab);
+		WebElement newNoteButton = wait.until(ExpectedConditions.visibilityOfElementLocated(By.id("buttonAddNewNote")));
+		newNoteButton.click();
+
+
+		WebElement titleInputField = wait.until(ExpectedConditions.visibilityOfElementLocated(By.id("note-title")));
+		titleInputField.sendKeys(title);
+		WebElement descriptionInputField = wait.until(ExpectedConditions.visibilityOfElementLocated(By.id("note-description")));
+		descriptionInputField.sendKeys(description);
+		WebElement saveBtn = wait.until(ExpectedConditions.visibilityOfElementLocated(By.id("saveNoteButton")));
+		saveBtn.click();
+	}
+
+	private void _checkNote(String title, String description){
+		//		go back home
+		driver.get(String.format("http://localhost:%s/dashboard", this.port));
+
+		WebDriverWait wait = new WebDriverWait(driver, 10);
+		JavascriptExecutor executor = (JavascriptExecutor) driver;
+		// go to notes tab
+		WebElement noteTab = wait.until(ExpectedConditions.visibilityOfElementLocated(By.id("nav-notes-tab")));
+		executor.executeScript("arguments[0].click()", noteTab);
+
+		assertThat(noteTab.getText().contains(title));
+		assertThat(noteTab.getText().contains(description));
 	}
 
 	@Test
@@ -112,6 +147,27 @@ class CloudstorageApplicationTests {
 		_logoutClick();
 		//		try to access home page
 		_accessHome();
+	}
+
+	@Test
+	@Order(3)
+	public void createNoteAndVerify(){
+//		login with the existing account
+		String firstName = "fsfsdf";
+		String lastName = "dfsd";
+		String username = "fsdf";
+		String password = "fsufs";
+		//		signup
+		_signupInput(firstName, lastName, username, password);
+		//		login
+		driver.get(String.format("http://localhost:%s/login", this.port));
+		_loginInput(username, password);
+//		create note
+		String title = "super duper book";
+		String description = "I am super duper new book!!!";
+		_createNote(title, description);
+//		check it is listed
+		_checkNote(title, description);
 	}
 
 }
