@@ -143,9 +143,9 @@ class CloudstorageApplicationTests {
 		//		login
 		driver.get(String.format("http://localhost:%s/login", this.port));
 		_loginInput(username, password);
-		//		logout
+//				logout
 		_logoutClick();
-		//		try to access home page
+//				try to access home page
 		_accessHome();
 	}
 
@@ -168,6 +168,53 @@ class CloudstorageApplicationTests {
 		_createNote(title, description);
 //		check it is listed
 		_checkNote(title, description);
+	}
+
+	private void _editNote(String title, String description){
+		driver.get(String.format("http://localhost:%s/dashboard", this.port));
+		WebDriverWait wait = new WebDriverWait(driver, 10);
+		JavascriptExecutor executor = (JavascriptExecutor) driver;
+		WebElement noteTab = wait.until(ExpectedConditions.visibilityOfElementLocated(By.id("nav-notes-tab")));
+//		open note tab
+		executor.executeScript("arguments[0].click()", noteTab);
+//		click edit button
+//		btn btn-success edit-note-button
+		WebElement editBtn = wait.until(ExpectedConditions.visibilityOfElementLocated(By.className("edit-note-button")));
+		executor.executeScript("arguments[0].click()", editBtn);
+//		input new title and description
+		WebElement titleInputField = wait.until(ExpectedConditions.visibilityOfElementLocated(By.id("note-title")));
+		titleInputField.sendKeys(title);
+		WebElement descriptionInputField = wait.until(ExpectedConditions.visibilityOfElementLocated(By.id("note-description")));
+		descriptionInputField.sendKeys(description);
+//		click save button
+		WebElement saveBtn = wait.until(ExpectedConditions.visibilityOfElementLocated(By.id("saveNoteButton")));
+		saveBtn.click();
+
+	}
+
+	@Test
+	@Order(4)
+	public void editNoteVerify(){
+		driver.get(String.format("http://localhost:%s/signup",port));
+		assertThat(driver.getTitle()).isEqualTo("Sign Up");
+		String firstName = "fsfsdf";
+		String lastName = "dfsd";
+		String username = "fsdf";
+		String password = "fsufs";
+		//		signup
+		_signupInput(firstName, lastName, username, password);
+		//		login
+		driver.get(String.format("http://localhost:%s/login", this.port));
+		_loginInput(username, password);
+		//		create note
+		String title = "super duper book";
+		String description = "I am super duper new book!!!";
+		_createNote(title, description);
+		String newtTitle = "new super duper book";
+		String newDescription = "I am a new super duper book!!!";
+//		edit the existing note
+		_editNote(newtTitle, newDescription);
+		_checkNote(newtTitle, newDescription);
 	}
 
 }
