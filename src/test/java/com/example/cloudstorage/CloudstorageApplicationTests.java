@@ -167,6 +167,95 @@ class CloudstorageApplicationTests {
 		executor.executeScript("arguments[0].click()", deleteBtn);
 	}
 
+	private void _createCredential(String url, String username, String password){
+		WebDriverWait wait = new WebDriverWait(driver, 10);
+		JavascriptExecutor executor = (JavascriptExecutor) driver;
+		WebElement credentialTab = wait.until(ExpectedConditions.visibilityOfElementLocated(By.id("nav-credentials-tab")));
+//		noteTab.click();
+		executor.executeScript("arguments[0].click()", credentialTab);
+		WebElement newCredentialButton = wait.until(ExpectedConditions.visibilityOfElementLocated(By.id("buttonAddNewCredential")));
+		newCredentialButton.click();
+
+		WebElement urlInputField = wait.until(ExpectedConditions.visibilityOfElementLocated(By.id("credential-url")));
+		urlInputField.sendKeys(url);
+		WebElement usernameInputField = wait.until(ExpectedConditions.visibilityOfElementLocated(By.id("credential-username")));
+		usernameInputField.sendKeys(username);
+		WebElement passwordInputField = wait.until(ExpectedConditions.visibilityOfElementLocated(By.id("credential-password")));
+		passwordInputField.sendKeys(password);
+		WebElement saveBtn = wait.until(ExpectedConditions.visibilityOfElementLocated(By.id("saveCredentialButton")));
+		saveBtn.click();
+	}
+
+	private void _checkCredential(String url, String username, String password){
+		//		go back home
+		driver.get(String.format("http://localhost:%s/dashboard", this.port));
+
+		WebDriverWait wait = new WebDriverWait(driver, 10);
+		JavascriptExecutor executor = (JavascriptExecutor) driver;
+		// go to notes tab
+		WebElement credentialTab = wait.until(ExpectedConditions.visibilityOfElementLocated(By.id("nav-credentials-tab")));
+		executor.executeScript("arguments[0].click()", credentialTab);
+
+		assertThat(credentialTab.getText().contains(url));
+		assertThat(credentialTab.getText().contains(username));
+		assertThat(credentialTab.getText().contains(password));
+	}
+
+	private void _editCredential(String url, String username, String password){
+		driver.get(String.format("http://localhost:%s/dashboard", this.port));
+		WebDriverWait wait = new WebDriverWait(driver, 10);
+		JavascriptExecutor executor = (JavascriptExecutor) driver;
+		WebElement credentialTab = wait.until(ExpectedConditions.visibilityOfElementLocated(By.id("nav-credentials-tab")));
+//		open note tab
+		executor.executeScript("arguments[0].click()", credentialTab);
+//		click edit button
+//		btn btn-success edit-note-button
+		WebElement editBtn = wait.until(ExpectedConditions.visibilityOfElementLocated(By.className("edit-credential-button")));
+		executor.executeScript("arguments[0].click()", editBtn);
+//		input new title and description
+
+		WebElement urlInputField = wait.until(ExpectedConditions.visibilityOfElementLocated(By.id("credential-url")));
+		urlInputField.sendKeys(url);
+		WebElement usernameInputField = wait.until(ExpectedConditions.visibilityOfElementLocated(By.id("credential-username")));
+		usernameInputField.sendKeys(username);
+		WebElement passwordInputField = wait.until(ExpectedConditions.visibilityOfElementLocated(By.id("credential-password")));
+		passwordInputField.sendKeys(password);
+//		click save button
+		WebElement saveBtn = wait.until(ExpectedConditions.visibilityOfElementLocated(By.id("saveCredentialButton")));
+		saveBtn.click();
+	}
+
+	private void _deleteCredential(){
+		//		go back home
+		driver.get(String.format("http://localhost:%s/dashboard", this.port));
+
+		WebDriverWait wait = new WebDriverWait(driver, 10);
+		JavascriptExecutor executor = (JavascriptExecutor) driver;
+		// go to notes tab
+		WebElement credentialTab = wait.until(ExpectedConditions.visibilityOfElementLocated(By.id("nav-credentials-tab")));
+		executor.executeScript("arguments[0].click()", credentialTab);
+//btn btn-danger delete-credential-button
+		WebElement deleteBtn = wait.until(ExpectedConditions.visibilityOfElementLocated(By.className("delete-credential-button")));
+		executor.executeScript("arguments[0].click()", deleteBtn);
+	}
+
+	private void _credentialNotContains(String url, String username, String password){
+		//		go back home
+		driver.get(String.format("http://localhost:%s/dashboard", this.port));
+
+		WebDriverWait wait = new WebDriverWait(driver, 10);
+		JavascriptExecutor executor = (JavascriptExecutor) driver;
+		// go to notes tab
+		WebElement credentialTab = wait.until(ExpectedConditions.visibilityOfElementLocated(By.id("nav-credentials-tab")));
+		executor.executeScript("arguments[0].click()", credentialTab);
+
+		assertThat(!credentialTab.getText().contains(url));
+		assertThat(!credentialTab.getText().contains(username));
+		assertThat(!credentialTab.getText().contains(password));
+
+	}
+
+
 	@Test
 	@Order(1)
 	public void dashboardAccessWithoutLogin(){
@@ -264,5 +353,74 @@ class CloudstorageApplicationTests {
 		_editNote(newtTitle, newDescription);
 		_deleteNote();
 		_notContains(newtTitle, newDescription);
+	}
+
+
+	@Test
+	@Order(6)
+	public void createCredentialAndVerify(){
+//		login with the existing account
+		String firstName = "fsfsdf";
+		String lastName = "dfsd";
+		String username = "fsdf";
+		String password = "fsufs";
+		driver.get(String.format("http://localhost:%s/signup",port));
+		//		signup
+		_signupInput(firstName, lastName, username, password);
+		//		login
+		driver.get(String.format("http://localhost:%s/login", this.port));
+		_loginInput(username, password);
+
+		String url = "http://localhost:8080/dashboard";
+		_createCredential(url, username, password);
+//		check it is listed
+		_checkCredential(url, username, password);
+	}
+
+	@Test
+	@Order(7)
+	public void editCredentialAndVerify(){
+		driver.get(String.format("http://localhost:%s/signup",port));
+		assertThat(driver.getTitle()).isEqualTo("Sign Up");
+		String firstName = "fsfsdf";
+		String lastName = "dfsd";
+		String username = "fsdf";
+		String password = "fsufs";
+		//		signup
+		_signupInput(firstName, lastName, username, password);
+		//		login
+		driver.get(String.format("http://localhost:%s/login", this.port));
+		_loginInput(username, password);
+
+		String url = "http://localhost:8080/dashboard";
+		_createCredential(url, username, password);
+
+		String newUrl = "http://localhost:8080/dashboard";
+		String newUsername = "new_username";
+		String newPassword = "new_password";
+		_editCredential(newUrl, newUsername, newPassword);
+		_checkCredential(newUrl, newUsername, newPassword);
+	}
+
+	@Test
+	@Order(8)
+	public void deleteCredentialAndVerify(){
+		driver.get(String.format("http://localhost:%s/signup",port));
+		assertThat(driver.getTitle()).isEqualTo("Sign Up");
+		String firstName = "fsfsdf";
+		String lastName = "dfsd";
+		String username = "fsdf";
+		String password = "fsufs";
+		//		signup
+		_signupInput(firstName, lastName, username, password);
+		//		login
+		driver.get(String.format("http://localhost:%s/login", this.port));
+		_loginInput(username, password);
+
+		String url = "http://localhost:8080/dashboard";
+		_createCredential(url, username, password);
+
+		_deleteCredential();
+		_credentialNotContains(url, username, password);
 	}
 }
