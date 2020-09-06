@@ -34,14 +34,6 @@ class CloudstorageApplicationTests {
 		driver.quit();
 	}
 
-
-	@Test
-	@Order(1)
-	public void dashboardAccessWithoutLogin(){
-		driver.get(String.format("http://localhost:%s/dashboard",port));
-		assertThat(driver.getTitle()).isEqualTo("Login");
-	}
-
 	private void _signupInput(String firstName, String lastName, String username, String password){
 
 		WebDriverWait wait = new WebDriverWait(driver, 10);
@@ -95,8 +87,6 @@ class CloudstorageApplicationTests {
 		assertThat(driver.getTitle()).isEqualTo("Login");
 	}
 
-
-
 	private void _createNote(String title, String description){
 		WebDriverWait wait = new WebDriverWait(driver, 10);
 		JavascriptExecutor executor = (JavascriptExecutor) driver;
@@ -105,7 +95,6 @@ class CloudstorageApplicationTests {
 		executor.executeScript("arguments[0].click()", noteTab);
 		WebElement newNoteButton = wait.until(ExpectedConditions.visibilityOfElementLocated(By.id("buttonAddNewNote")));
 		newNoteButton.click();
-
 
 		WebElement titleInputField = wait.until(ExpectedConditions.visibilityOfElementLocated(By.id("note-title")));
 		titleInputField.sendKeys(title);
@@ -127,7 +116,62 @@ class CloudstorageApplicationTests {
 
 		assertThat(noteTab.getText().contains(title));
 		assertThat(noteTab.getText().contains(description));
+	}
 
+	private void _editNote(String title, String description){
+		driver.get(String.format("http://localhost:%s/dashboard", this.port));
+		WebDriverWait wait = new WebDriverWait(driver, 10);
+		JavascriptExecutor executor = (JavascriptExecutor) driver;
+		WebElement noteTab = wait.until(ExpectedConditions.visibilityOfElementLocated(By.id("nav-notes-tab")));
+//		open note tab
+		executor.executeScript("arguments[0].click()", noteTab);
+//		click edit button
+//		btn btn-success edit-note-button
+		WebElement editBtn = wait.until(ExpectedConditions.visibilityOfElementLocated(By.className("edit-note-button")));
+		executor.executeScript("arguments[0].click()", editBtn);
+//		input new title and description
+		WebElement titleInputField = wait.until(ExpectedConditions.visibilityOfElementLocated(By.id("note-title")));
+		titleInputField.sendKeys(title);
+		WebElement descriptionInputField = wait.until(ExpectedConditions.visibilityOfElementLocated(By.id("note-description")));
+		descriptionInputField.sendKeys(description);
+//		click save button
+		WebElement saveBtn = wait.until(ExpectedConditions.visibilityOfElementLocated(By.id("saveNoteButton")));
+		saveBtn.click();
+	}
+
+	private void _notContains(String title, String description){
+		//		go back home
+		driver.get(String.format("http://localhost:%s/dashboard", this.port));
+
+		WebDriverWait wait = new WebDriverWait(driver, 10);
+		JavascriptExecutor executor = (JavascriptExecutor) driver;
+		// go to notes tab
+		WebElement noteTab = wait.until(ExpectedConditions.visibilityOfElementLocated(By.id("nav-notes-tab")));
+		executor.executeScript("arguments[0].click()", noteTab);
+
+		assertThat(!noteTab.getText().contains(title));
+		assertThat(!noteTab.getText().contains(description));
+	}
+
+	private void _deleteNote(){
+		//		go back home
+		driver.get(String.format("http://localhost:%s/dashboard", this.port));
+
+		WebDriverWait wait = new WebDriverWait(driver, 10);
+		JavascriptExecutor executor = (JavascriptExecutor) driver;
+		// go to notes tab
+		WebElement noteTab = wait.until(ExpectedConditions.visibilityOfElementLocated(By.id("nav-notes-tab")));
+		executor.executeScript("arguments[0].click()", noteTab);
+
+		WebElement deleteBtn = wait.until(ExpectedConditions.visibilityOfElementLocated(By.className("delete-note-button")));
+		executor.executeScript("arguments[0].click()", deleteBtn);
+	}
+
+	@Test
+	@Order(1)
+	public void dashboardAccessWithoutLogin(){
+		driver.get(String.format("http://localhost:%s/dashboard",port));
+		assertThat(driver.getTitle()).isEqualTo("Login");
 	}
 
 	@Test
@@ -171,42 +215,6 @@ class CloudstorageApplicationTests {
 		_checkNote(title, description);
 	}
 
-	private void _editNote(String title, String description){
-		driver.get(String.format("http://localhost:%s/dashboard", this.port));
-		WebDriverWait wait = new WebDriverWait(driver, 10);
-		JavascriptExecutor executor = (JavascriptExecutor) driver;
-		WebElement noteTab = wait.until(ExpectedConditions.visibilityOfElementLocated(By.id("nav-notes-tab")));
-//		open note tab
-		executor.executeScript("arguments[0].click()", noteTab);
-//		click edit button
-//		btn btn-success edit-note-button
-		WebElement editBtn = wait.until(ExpectedConditions.visibilityOfElementLocated(By.className("edit-note-button")));
-		executor.executeScript("arguments[0].click()", editBtn);
-//		input new title and description
-		WebElement titleInputField = wait.until(ExpectedConditions.visibilityOfElementLocated(By.id("note-title")));
-		titleInputField.sendKeys(title);
-		WebElement descriptionInputField = wait.until(ExpectedConditions.visibilityOfElementLocated(By.id("note-description")));
-		descriptionInputField.sendKeys(description);
-//		click save button
-		WebElement saveBtn = wait.until(ExpectedConditions.visibilityOfElementLocated(By.id("saveNoteButton")));
-		saveBtn.click();
-
-	}
-
-	private void _notContains(String title, String description){
-		//		go back home
-		driver.get(String.format("http://localhost:%s/dashboard", this.port));
-
-		WebDriverWait wait = new WebDriverWait(driver, 10);
-		JavascriptExecutor executor = (JavascriptExecutor) driver;
-		// go to notes tab
-		WebElement noteTab = wait.until(ExpectedConditions.visibilityOfElementLocated(By.id("nav-notes-tab")));
-		executor.executeScript("arguments[0].click()", noteTab);
-
-		assertThat(!noteTab.getText().contains(title));
-		assertThat(!noteTab.getText().contains(description));
-	}
-
 	@Test
 	@Order(4)
 	public void editNoteVerify(){
@@ -230,20 +238,6 @@ class CloudstorageApplicationTests {
 //		edit the existing note
 		_editNote(newtTitle, newDescription);
 		_checkNote(newtTitle, newDescription);
-	}
-
-	private void _deleteNote(){
-		//		go back home
-		driver.get(String.format("http://localhost:%s/dashboard", this.port));
-
-		WebDriverWait wait = new WebDriverWait(driver, 10);
-		JavascriptExecutor executor = (JavascriptExecutor) driver;
-		// go to notes tab
-		WebElement noteTab = wait.until(ExpectedConditions.visibilityOfElementLocated(By.id("nav-notes-tab")));
-		executor.executeScript("arguments[0].click()", noteTab);
-//btn btn-danger delete-note-button
-		WebElement deleteBtn = wait.until(ExpectedConditions.visibilityOfElementLocated(By.className("delete-note-button")));
-		executor.executeScript("arguments[0].click()", deleteBtn);
 	}
 
 	@Test
