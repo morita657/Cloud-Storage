@@ -12,17 +12,29 @@ public class FileService {
     private FileMapper fileMapper;
 
     public FileService(FileMapper fileMapper) {
+
         this.fileMapper = fileMapper;
     }
 
-    public List<File> getFile(){
-        return fileMapper.getAllFiles();
+    public List<File> getFile(Long userid){
+        return fileMapper.getAllFiles(userid);
     }
 
     public boolean addFile(MultipartFile file, Long userid){
 
         try{
             File newfile = new File(file.getOriginalFilename(), file.getContentType(), file.getSize(), file.getBytes());
+            // Do not allow to upload empty file
+            if(file.getOriginalFilename().length()<=0 || file.getContentType().length()<=0 || file.getSize()<=0){
+                return false;
+            }
+            // Do not allow the duplicate file name
+            for(File fileInfo : fileMapper.getAllFiles(userid)){
+                if(fileInfo.getFileName().equals(file.getOriginalFilename())){
+                    return false;
+                }
+            }
+
             fileMapper.create(newfile, userid);
             return true;
         }catch(Exception e){

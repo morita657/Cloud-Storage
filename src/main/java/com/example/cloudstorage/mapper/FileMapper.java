@@ -12,8 +12,8 @@ import java.util.List;
 @Mapper
 @Repository
 public interface FileMapper {
-    @Select("select * from files")
-    List<File> getAllFiles();
+    @Select("select * from files where userid = #{userid}")
+    List<File> getAllFiles(Long userid);
 
     @Select("insert into FILES (filename, contenttype, filesize, userid, filedata) values (#{file.fileName}, #{file.contentType}, #{file.fileSize}, #{userid}, #{file.fileData})")
     @Options(useGeneratedKeys = true, keyProperty = "fileId")
