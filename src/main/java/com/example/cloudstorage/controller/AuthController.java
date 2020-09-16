@@ -30,8 +30,10 @@ public class AuthController {
         try {
             userService.register(user);
         }catch(Exception e){
+            System.out.println("error");
             return "redirect:signup?error";
         }
-        return "redirect:signup?success";
+        System.out.println("signup done");
+        return "redirect:login?success";
     }
 }
