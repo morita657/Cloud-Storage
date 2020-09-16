@@ -28,9 +28,12 @@ public class FileService {
                 return false;
             }
             // Do not allow the duplicate file name
-            if(fileMapper.find(file.getOriginalFilename())){
-                return false;
+            for(File fileInfo : fileMapper.getAllFiles()){
+                if(fileInfo.getFileName().equals(file.getOriginalFilename())){
+                    return false;
+                }
             }
+
             fileMapper.create(newfile, userid);
             return true;
         }catch(Exception e){
