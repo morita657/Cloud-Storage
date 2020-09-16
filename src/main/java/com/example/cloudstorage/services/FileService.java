@@ -23,7 +23,12 @@ public class FileService {
 
         try{
             File newfile = new File(file.getOriginalFilename(), file.getContentType(), file.getSize(), file.getBytes());
+            // Do not allow to upload empty file
             if(file.getOriginalFilename().length()<=0 || file.getContentType().length()<=0 || file.getSize()<=0){
+                return false;
+            }
+            // Do not allow the duplicate file name
+            if(fileMapper.find(file.getOriginalFilename())){
                 return false;
             }
             fileMapper.create(newfile, userid);
