@@ -9,8 +9,8 @@ import java.util.List;
 @Mapper
 @Repository
 public interface NoteMapper {
-    @Select("select * from notes")
-    List<Note> getAllNotes();
+    @Select("select * from notes where userid= #{userid}")
+    List<Note> getAllNotes(Long userid);
 
     @Insert("insert into Notes (notetitle, notedescription, userid) values (#{note.noteTitle}, #{note.noteDescription}, #{userid})")
     Integer create(@Param("note") Note note , Long userid);
