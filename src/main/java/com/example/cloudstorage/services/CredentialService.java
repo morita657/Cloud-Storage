@@ -45,7 +45,7 @@ public class CredentialService {
         }
         for(Credential credential:credentials){
             credential.setDecryptedPassword(decryptPassword(credential.getPassword(), credential.getKey()));
-            credential.setPassword(credential.getDecryptedPassword());
+            credential.setPassword(credential.getPassword());
             credential.setKey(credential.getKey());
         }
         return credentials;
