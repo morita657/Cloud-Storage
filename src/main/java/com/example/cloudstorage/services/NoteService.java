@@ -14,8 +14,8 @@ public class NoteService {
         this.noteMapper = noteMapper;
     }
 
-    public List<Note> getNote(){
-        return noteMapper.getAllNotes();
+    public List<Note> getNote(Long userid){
+        return noteMapper.getAllNotes(userid);
     }
 
     public boolean addNote(Note note, Long userid){
